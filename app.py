@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 # Load API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 html_template = """
 <!DOCTYPE html>
 <html>
@@ -15,19 +14,59 @@ html_template = """
     <meta name="google-adsense-account" content="ca-pub-5149547050862927">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
         crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        input[type=text] {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: orange;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkorange;
+        }
+        .chat-box {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Phoenix Chatbot</h1>
+    <h1>🔥 Welcome to Phoenix Chatbot 🔥</h1>
     <form method="post">
         <input type="text" name="user_input" placeholder="Ask me anything..." required>
         <button type="submit">Send</button>
     </form>
+
     {% if user_input %}
+    <div class="chat-box">
         <p><strong>You:</strong> {{ user_input }}</p>
         <p><strong>Phoenix:</strong> {{ response }}</p>
+    </div>
     {% endif %}
 </body>
 </html>
+"""
+
+
 """
 
 @app.route("/", methods=["GET", "POST"])
