@@ -19,6 +19,6 @@ def home():
     </body>
     </html>
     """)
-# Route to serve AdSense verification file
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=10000)  # Important: use port 10000 for Render
+    app.run(host='0.0.0.0', port=10000)
