@@ -4,27 +4,27 @@ import os
 
 app = Flask(__name__)
 
-# Set your OpenAI API key (secure this later!)
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Best practice: set in Render's environment
+# Load API key from environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# HTML with chat form
-HTML_PAGE = """
+html_template = """
 <!DOCTYPE html>
 <html>
 <head>
     <title>Phoenix Chatbot</title>
     <meta name="google-adsense-account" content="ca-pub-5149547050862927">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+        crossorigin="anonymous"></script>
 </head>
 <body>
     <h1>Welcome to Phoenix Chatbot</h1>
-    <form method="POST">
-        <label>Ask something:</label><br>
-        <input type="text" name="user_input" style="width:300px;" required>
+    <form method="post">
+        <input type="text" name="user_input" placeholder="Ask me anything..." required>
         <button type="submit">Send</button>
     </form>
-    {% if reply %}
-        <p><strong>Phoenix:</strong> {{ reply }}</p>
+    {% if user_input %}
+        <p><strong>You:</strong> {{ user_input }}</p>
+        <p><strong>Phoenix:</strong> {{ response }}</p>
     {% endif %}
 </body>
 </html>
@@ -32,18 +32,25 @@ HTML_PAGE = """
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    reply = None
+    response = None
+    user_input = None
+
     if request.method == "POST":
         user_input = request.form["user_input"]
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are Phoenix, a helpful chatbot."},
-                {"role": "user", "content": user_input}
-            ]
-        )
-        reply = response.choices[0].message.content
-    return render_template_string(HTML_PAGE, reply=reply)
+
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant named Phoenix."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            response = completion.choices[0].message.content.strip()
+        except Exception as e:
+            response = "Sorry, something went wrong."
+
+    return render_template_string(html_template, user_input=user_input, response=response)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host='0.0.0.0', port=10000)
