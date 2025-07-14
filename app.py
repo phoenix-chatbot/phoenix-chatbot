@@ -1,11 +1,7 @@
 from flask import Flask, request, render_template_string
-import openai
-import os
 
 app = Flask(__name__)
 
-# Load API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
 html_template = """
 <!DOCTYPE html>
 <html>
@@ -15,44 +11,17 @@ html_template = """
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
         crossorigin="anonymous"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-        input[type=text] {
-            width: 60%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: orange;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkorange;
-        }
-        .chat-box {
-            margin-top: 30px;
-            text-align: left;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
+        body { font-family: Arial; padding: 20px; background: #f9f9f9; text-align: center; }
+        input[type=text] { width: 60%; padding: 10px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; background: orange; color: white; border: none; cursor: pointer; }
+        button:hover { background: darkorange; }
+        .chat-box { margin-top: 30px; background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: 30px auto 0 auto; text-align: left; }
     </style>
 </head>
 <body>
-    <h1>🔥 Welcome to Phoenix Chatbot 🔥</h1>
-    <form method="post">
-        <input type="text" name="user_input" placeholder="Ask me anything..." required>
+    <h1>🔥 Phoenix is online and ready to chat 🔥</h1>
+    <form method="POST">
+        <input type="text" name="user_input" placeholder="Type your message..." required />
         <button type="submit">Send</button>
     </form>
 
@@ -66,30 +35,15 @@ html_template = """
 </html>
 """
 
-
-"""
-
 @app.route("/", methods=["GET", "POST"])
 def home():
-    response = None
-    user_input = None
-
+    user_input = ""
+    response = ""
     if request.method == "POST":
-        user_input = request.form["user_input"]
-
-        try:
-            completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant named Phoenix."},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-            response = completion.choices[0].message.content.strip()
-        except Exception as e:
-            response = "Sorry, something went wrong."
-
+        user_input = request.form.get("user_input")
+        # Simulate chatbot response (replace this with your real logic)
+        response = f"I heard you say: {user_input}"
     return render_template_string(html_template, user_input=user_input, response=response)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=10000)
+    app.run(host="0.0.0.0", port=10000)
