@@ -5,81 +5,68 @@
     <title>Phoenix Chatbot</title>
     <meta name="google-adsense-account" content="ca-pub-5149547050862927">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-     crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #121212;
-            color: #fff;
-            padding: 20px;
+            margin: 40px;
+            background-color: #f9f9f9;
         }
-        #chatbox {
+        #chat-box {
             width: 100%;
             max-width: 600px;
             margin: auto;
-            background: #1f1f1f;
-            padding: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            background: #fff;
             border-radius: 10px;
         }
-        .msg {
+        .message {
             margin-bottom: 10px;
         }
-        .user { color: #00f; }
-        .bot { color: #0f0; }
-        input {
-            width: 80%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
+        .user {
+            color: blue;
         }
-        button {
-            padding: 10px 15px;
-            background: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        .bot {
+            color: green;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+            width: calc(100% - 24px);
         }
     </style>
 </head>
 <body>
-    <div id="chatbox">
-        <div id="chatlog"></div>
-        <input type="text" id="userInput" placeholder="Type your message..." />
+    <div id="chat-box">
+        <h2>Phoenix is online 🔥</h2>
+        <div id="messages"></div>
+        <input type="text" id="user-input" placeholder="Ask me anything...">
         <button onclick="sendMessage()">Send</button>
     </div>
 
-    <!-- AdSense block (invisible but verified) -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-5149547050862927"
-         data-ad-slot="1234567890"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+        function sendMessage() {
+            const input = document.getElementById("user-input");
+            const message = input.value;
+            if (!message) return;
 
-    <script>
-        async function sendMessage() {
-            const input = document.getElementById("userInput");
-            const msg = input.value;
-            if (!msg) return;
-
-            // Show user message
-            const chatlog = document.getElementById("chatlog");
-            chatlog.innerHTML += `<div class="msg user"><b>You:</b> ${msg}</div>`;
-
-            // Send to Flask
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: msg })
-            });
-            const data = await res.json();
-
-            // Show bot reply
-            chatlog.innerHTML += `<div class="msg bot"><b>Phoenix:</b> ${data.reply}</div>`;
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
             input.value = "";
+
+            fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                messagesDiv.innerHTML += `<div class="message bot"><strong>Phoenix:</strong> ${data.response}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
         }
     </script>
 </body>
