@@ -1,48 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Phoenix Chatbot</title>
     <meta name="google-adsense-account" content="ca-pub-5149547050862927">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-        crossorigin="anonymous"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
+            background: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        #chat-box {
+        .chat-container {
             width: 100%;
-            max-width: 600px;
-            margin: auto;
-            border: 1px solid #ccc;
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
+            max-width: 500px;
+            background: #1f1f1f;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #000;
+            overflow: hidden;
+        }
+        .chat-box {
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
         }
         .message {
-            margin-bottom: 10px;
+            margin: 10px 0;
         }
         .user {
-            color: blue;
+            text-align: right;
+            color: #0af;
         }
         .bot {
-            color: green;
+            text-align: left;
+            color: #0f0;
         }
-        input, button {
-            padding: 10px;
-            margin-top: 10px;
-            width: calc(100% - 24px);
+        .input-area {
+            display: flex;
+            border-top: 1px solid #333;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #222;
+            color: white;
+        }
+        button {
+            padding: 12px;
+            background: #0af;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #08c;
         }
     </style>
 </head>
 <body>
-    <div id="chat-box">
-        <h2>Phoenix is online 🔥</h2>
-        <div id="messages"></div>
-        <input type="text" id="user-input" placeholder="Ask me anything...">
-        <button onclick="sendMessage()">Send</button>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">Phoenix is online. 🔥</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
     <script>
@@ -51,22 +78,27 @@
             const message = input.value;
             if (!message) return;
 
-            const messagesDiv = document.getElementById("messages");
-            messagesDiv.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
+            appendMessage("user", message);
             input.value = "";
 
             fetch("/chat", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
             })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                messagesDiv.innerHTML += `<div class="message bot"><strong>Phoenix:</strong> ${data.response}</div>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                appendMessage("bot", data.reply);
             });
+        }
+
+        function appendMessage(sender, text) {
+            const chatBox = document.getElementById("chat-box");
+            const msg = document.createElement("div");
+            msg.className = `message ${sender}`;
+            msg.textContent = text;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
