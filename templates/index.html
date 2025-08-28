@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Phoenix Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#eee; display:flex; justify-content:center; padding-top:30px; }
+    .box { width:480px; background:#1b1b1b; border-radius:10px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,0.6); }
+    #chat { height:360px; overflow:auto; border:1px solid #333; padding:10px; background:#0f0f0f; margin-bottom:8px; }
+    .user { color:#ffb86b; margin:6px 0; }
+    .bot { color:#84ffff; margin:6px 0; }
+    .meta { font-size:13px; color:#ddd; margin-bottom:6px; }
+    .controls { display:flex; gap:6px; }
+    input[type="text"] { flex:1; padding:8px; border-radius:6px; border:none; background:#222; color:#fff; }
+    button { padding:8px 12px; border:none; border-radius:6px; background:#ff6b35; color:#000; font-weight:700; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="meta">🔥 Phoenix Chatbot — Score: <span id="score">{{ score }}</span></div>
+    <div id="chat">
+      {% for m in messages %}
+        {% if m.role == 'user' %}
+          <div class="user"><b>You:</b> {{ m.content }}</div>
+        {% else %}
+          <div class="bot"><b>Bot:</b> {{ m.content }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="controls">
+      <input id="msg" type="text" placeholder="Type a message (try: 'riddle')" />
+      <button id="send">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const sendBtn = document.getElementById("send");
+    const msgInput = document.getElementById("msg");
+    const chatDiv = document.getElementById("chat");
+    const scoreSpan = document.getElementById("score");
+
+    async function sendMessage() {
+      const text = msgInput.value.trim();
+      if (!text) return;
+      // show local user message
+      const u = document.createElement("div");
+      u.className = "user"; u.innerHTML = `<b>You:</b> ${text}`;
+      chatDiv.appendChild(u);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+      msgInput.value = "";
+
+      // send (form-encoded) — backend accepts both form and JSON
+      const formData = new URLSearchParams();
+      formData.append('message', text);
+
+      const resp = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: formData.toString()
+      });
+      const data = await resp.json();
+      const b = document.createElement("div");
+      b.className = "bot"; b.innerHTML = `<b>Bot:</b> ${data.reply}`;
+      chatDiv.appendChild(b);
+      scoreSpan.innerText = data.score;
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    msgInput.addEventListener("keydown", (e)=>{ if (e.key==="Enter") sendMessage(); });
+  </script>
+</body>
+</html>
