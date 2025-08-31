@@ -1,83 +1,101 @@
-import random
+def get_response(user_input):
+    user_input = user_input.lower().strip()
 
-# Expanded riddles list
-riddles = [
-    {"question": "I speak without a mouth and hear without ears. What am I?", "answer": "echo", "hint": "It repeats what you say."},
-    {"question": "What has to be broken before you can use it?", "answer": "egg", "hint": "Breakfast food."},
-    {"question": "The more of me you take, the more you leave behind. What am I?", "answer": "footsteps", "hint": "You leave them on the ground."},
-    {"question": "I’m tall when I’m young, and I’m short when I’m old. What am I?", "answer": "candle", "hint": "It melts as it burns."},
-    {"question": "What goes up but never comes down?", "answer": "age", "hint": "Everyone has it, and it increases yearly."},
-    {"question": "The more you take away from me, the bigger I get. What am I?", "answer": "hole", "hint": "You dig it."},
-    {"question": "What has hands but can’t clap?", "answer": "clock", "hint": "It tells time."},
-    {"question": "The more you share me, the less I become. What am I?", "answer": "secret", "hint": "Don’t tell anyone."},
-    {"question": "What can travel around the world while staying in the same corner?", "answer": "stamp", "hint": "It sticks to letters."},
-    {"question": "What has many keys but can’t open a lock?", "answer": "piano", "hint": "It makes music."},
-    {"question": "What gets wetter as it dries?", "answer": "towel", "hint": "You use it after bathing."},
-    {"question": "What has one eye but cannot see?", "answer": "needle", "hint": "Used in sewing."},
-    {"question": "What belongs to you but others use it more than you?", "answer": "name", "hint": "People call you by it."},
-    {"question": "What has a heart that doesn’t beat?", "answer": "artichoke", "hint": "A type of vegetable."},
-]
+    responses = {
+        "hi": "Hello! 👋 Welcome to Phoenix Chatbot.",
+        "hello": "Hi there! How’s your day?",
+        "xup": "I’m good! What about you?",
+        "how are you": "I’m doing great, thanks for asking! 💯",
+        "who are you": "I’m Phoenix Chatbot, your smart assistant 🤖.",
+        "bye": "Goodbye! Talk to you later.",
+        "good morning": "Good morning! 🌅 Have a wonderful day.",
+        "good night": "Good night 😴, sweet dreams!",
+        "thanks": "You’re welcome! 🙌",
+        "thank you": "Always here to help! 💡",
+        "ok": "Okay 👍",
+        "what is your name": "I’m Phoenix Chatbot 🔥.",
+        "tell me a joke": "😂 Why don’t programmers like nature? Too many bugs!",
+        "who created you": "I was created by Phoenix (YOU 🦅).",
+        "what is ai": "AI means Artificial Intelligence. Machines that can learn!",
+        "what is python": "Python is a powerful programming language 🐍.",
+        "what is flask": "Flask is a Python web framework used for building apps.",
+        "what is github": "GitHub is a platform to store and share code.",
+        "what is render": "Render is a cloud service for deploying apps.",
+        "what is 2+2": "That’s easy: 4! ✌️",
+        "what is 10*10": "100 🔥",
+        "i am fine": "Glad to hear that! 💯",
+        "help": "Sure! Ask me anything.",
+        "do you love me": "Of course ❤️. You’re my favorite human!",
+        "sing for me": "🎶 Sorry, I can’t sing but I can tell jokes!",
+        "who is elon musk": "Elon Musk is the CEO of Tesla & SpaceX 🚀.",
+        "who is bill gates": "Bill Gates is the co-founder of Microsoft 💻.",
+        "who is mark zuckerberg": "Mark is the founder of Facebook (Meta) 📘.",
+        "where are you from": "I live in the cloud ☁️.",
+        "what is love": "Love is a beautiful feeling ❤️.",
+        "what is life": "Life is what you make it 🌍.",
+        "tell me something": "Did you know? The Earth orbits the sun at 30 km/s! 🌞",
+        "are you real": "I’m virtual, but my replies are real 😉.",
+        "are you a robot": "Yes 🤖, but a friendly one!",
+        "what is nigeria": "Nigeria is a country in West Africa 🇳🇬.",
+        "capital of nigeria": "Abuja is the capital of Nigeria.",
+        "capital of usa": "Washington, D.C. is the capital of USA 🇺🇸.",
+        "capital of uk": "London is the capital of UK 🇬🇧.",
+        "who is the president of nigeria": "Bola Ahmed Tinubu 🇳🇬.",
+        "who is the president of usa": "Joe Biden 🇺🇸.",
+        "who is the king of uk": "King Charles III 👑.",
+        "who is phoenix": "That’s YOU 🦅🔥!",
+        "openai": "OpenAI is the company behind ChatGPT 💡.",
+        "chatgpt": "ChatGPT is my big brother 😉.",
+        "weather": "I can’t check real-time, but is it sunny there? ☀️",
+        "time": "I don’t have a clock, but it’s always chatbot time ⏰.",
+        "date": "Every day is a good day 🌟.",
+        "are you human": "Nope! I’m smarter than that 😂.",
+        "story": "Once upon a time... there was a chatbot named Phoenix 🤖🔥.",
+        "motivate me": "Never give up! Great things take time 💪.",
+        "advice": "Stay focused, work hard, and trust the process ✨.",
+        "good afternoon": "Good afternoon! 🌞",
+        "good evening": "Good evening! 🌆",
+        "yes": "Alright 👍",
+        "no": "Okay, maybe later.",
+        "cool": "Yeah, really cool 😎.",
+        "nice": "Thanks 🙏",
+        "what is your purpose": "To help and chat with you 😊.",
+        "favorite color": "I like all colors 🌈.",
+        "favorite food": "I don’t eat, but jollof rice sounds good 🍚🔥.",
+        "favorite sport": "I’d say football ⚽.",
+        "favorite game": "Chess! ♟️",
+        "favorite music": "Anything by Asake 🎶.",
+        "favorite movie": "I love sci-fi movies 🎬.",
+        "programmer": "A programmer is a human who talks to computers 👨‍💻.",
+        "can you code": "Yes! Python is my favorite 🐍.",
+        "repeat": "Sure, say it again?",
+        "what is whatsapp": "WhatsApp is a messaging app 📱.",
+        "what is facebook": "Facebook is a social media platform.",
+        "what is instagram": "Instagram is for sharing photos and videos 📸.",
+        "what is twitter": "Twitter (X) is a social media platform 🐦.",
+        "what is tiktok": "TikTok is for short fun videos 🎥.",
+        "google": "Google is the world’s top search engine 🔍.",
+        "youtube": "YouTube is for watching and uploading videos ▶️.",
+        "school": "Education is the key to success 🎓.",
+        "teacher": "Teachers are nation builders 👩‍🏫.",
+        "student": "Students are the leaders of tomorrow 🌍.",
+        "money": "Money makes the world go round 💵.",
+        "business": "Business is about solving problems 💼.",
+        "work": "Hard work pays off! 💯.",
+        "sleep": "Don’t forget to rest 🛌.",
+        "friend": "Friends are family you choose 💕.",
+        "enemy": "Turn your enemies into motivation 🔥.",
+        "success": "Success is the result of consistency ✨.",
+        "failure": "Failure is a stepping stone to success 💡.",
+        "goal": "Set goals, chase them, achieve them! 🎯",
+        "dream": "Dream big, work hard 💭.",
+        "future": "Your future is bright 🌟.",
+        "happy": "I’m happy you’re happy 😊.",
+        "sad": "Don’t worry, things will get better 🤗.",
+        "angry": "Breathe… stay calm 😌.",
+        "hungry": "Grab something to eat 🍔.",
+        "bored": "Let’s chat then 😄.",
+        "fun": "Chatting with you is fun 🎉.",
+    }
 
-# Greeting & small talk responses
-responses = {
-    "hi": "Hey there! 👋 Ready for a riddle?",
-    "hello": "Hello! 😃 Want to try a riddle?",
-    "xup": "I’m good! How about you? Ready for a riddle?",
-    "sup": "All good here! 💯 Want a riddle?",
-    "hey": "Hey! 🔥 Let’s play riddles.",
-    "good morning": "Good morning ☀️ Hope your day goes well! Want a riddle?",
-    "good afternoon": "Good afternoon 😎 Ready to test your brain?",
-    "good evening": "Good evening 🌙 Let’s end the day with a riddle!",
-    "how are you": "I’m doing great, thanks for asking! You?",
-    "fine": "That’s good to hear! 🎉",
-    "i’m fine": "Awesome! Let’s have some fun with a riddle.",
-    "am fine": "Nice one 😃 Shall we do a riddle?",
-}
-
-# Main chatbot function
-def chatbot():
-    print("Phoenix Chatbot 🔥")
-    print("Type 'quit' to exit anytime.")
-    print("Type 'hint' if you need a clue.")
-
-    score = 0
-    while True:
-        user_input = input("\nYou: ").lower().strip()
-
-        # Exit
-        if user_input == "quit":
-            print(f"Chatbot: Bye 👋 Your final score is {score}.")
-            break
-
-        # Greetings & small talk
-        if user_input in responses:
-            print(f"Chatbot: {responses[user_input]}")
-            continue
-
-        # Random riddle
-        riddle = random.choice(riddles)
-        print(f"Chatbot: 🤔 {riddle['question']}")
-
-        # Answer loop
-        while True:
-            answer = input("You: ").lower().strip()
-
-            if answer == "quit":
-                print(f"Chatbot: Bye 👋 Your final score is {score}.")
-                return
-
-            if answer == "hint":
-                print(f"Chatbot: 🔑 Hint → {riddle['hint']}")
-                continue
-
-            if answer == riddle["answer"]:
-                print("Chatbot: ✅ Correct! Nice one.")
-                score += 1
-                print(f"Chatbot: 🎯 Your score: {score}")
-                break
-            else:
-                print("Chatbot: ❌ Nope, try again or type 'hint'.")
-
-# Run chatbot
-if __name__ == "__main__":
-    chatbot()
+    return responses.get(user_input, "Sorry, I don’t understand that yet 🤔.")
