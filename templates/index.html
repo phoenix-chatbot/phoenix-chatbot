@@ -1,46 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Phoenix Chatbot</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927" crossorigin="anonymous"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; }
-    #chatbox { width: 60%; margin: auto; margin-top: 40px; padding: 20px; border-radius: 10px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .message { margin: 10px; padding: 10px; border-radius: 5px; }
-    .user { background: #007bff; color: #fff; text-align: right; }
-    .bot { background: #e0e0e0; color: #000; text-align: left; }
-    input { width: 70%; padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 15px; border: none; background: #007bff; color: #fff; border-radius: 5px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; text-align: center; }
+    #chatbox { width: 300px; margin: auto; border: 1px solid #ccc; padding: 10px; }
+    #messages { height: 200px; overflow-y: auto; text-align: left; }
+    input { width: 80%; padding: 5px; }
+    button { padding: 5px; }
   </style>
+  <!-- Adsense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927" crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>🔥 Phoenix Chatbot 🔥</h1>
-  <div id="chatbox"></div>
-  <input type="text" id="userInput" placeholder="Type your message...">
-  <button onclick="sendMessage()">Send</button>
+  <h1>Phoenix is ready to support 🔥</h1>
+  <div id="chatbox">
+    <div id="messages"></div>
+    <input id="user_input" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
   <script>
     async function sendMessage() {
-      const userInput = document.getElementById("userInput");
-      const message = userInput.value.trim();
-      if (!message) return;
+      let userMessage = document.getElementById("user_input").value;
+      if (userMessage.trim() === "") return;
 
-      // Show user message
-      const chatbox = document.getElementById("chatbox");
-      chatbox.innerHTML += `<div class="message user">${message}</div>`;
+      let messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML += "<p><b>You:</b> " + userMessage + "</p>";
 
-      // Send to backend
-      const response = await fetch("/chat", {
+      const response = await fetch("/get", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message })
+        body: JSON.stringify({ message: userMessage })
       });
 
       const data = await response.json();
-      chatbox.innerHTML += `<div class="message bot">${data.response}</div>`;
-      userInput.value = "";
-      chatbox.scrollTop = chatbox.scrollHeight;
+      messagesDiv.innerHTML += "<p><b>Phoenix:</b> " + data.response + "</p>";
+      document.getElementById("user_input").value = "";
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
   </script>
 </body>
