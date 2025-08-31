@@ -1,4 +1,5 @@
-# chatbot.py
+import random
+
 def get_response(user_input):
     responses = {
         "hi": "Hello! How are you doing?",
@@ -90,5 +91,15 @@ def get_response(user_input):
         "game": "Games are activities for fun or challenge 🎮."
     }
 
+    fallbacks = [
+        "Hmm 🤔… I’m not sure about that yet.",
+        "Can you ask in another way?",
+        "I don’t know that one, but I’m learning every day!",
+        "Interesting… tell me more.",
+        "I didn’t catch that, can you rephrase?",
+        "That’s new to me 😅.",
+        "Good question… I’ll update my brain on that!"
+    ]
+
     user_input = user_input.lower().strip()
-    return responses.get(user_input, "Sorry, I don’t understand that yet. Ask me something else!")
+    return responses.get(user_input, random.choice(fallbacks))
