@@ -17,7 +17,7 @@ def get_response(user_input):
         "yes": "Great!",
         "no": "Okay, no problem.",
         "help": "Sure, I'm here to help. Ask me anything!",
-        "who made you": "I was built by Phoenix team 🔥.",
+        "who made you": "I was built by Olawale (Founder Of Phoenix 🔥).",
         "your purpose": "I am here to assist and chat with you.",
         "what is ai": "AI means Artificial Intelligence — machines that can think and learn.",
         "what is chatbot": "A chatbot is a program that talks with humans like I do.",
