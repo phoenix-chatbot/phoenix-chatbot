@@ -6,3 +6,4 @@ flask_session/
 *.py[cod]
 .DS_Store
 Thumbs.db
+.env.*
