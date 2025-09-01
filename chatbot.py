@@ -1,105 +1,36 @@
-import random
+import json
+from googletrans import Translator
+
+# Load Q&A from JSON file
+with open("qa.json", "r", encoding="utf-8") as f:
+    qa_pairs = json.load(f)
+
+# Create translator object
+translator = Translator()
 
 def get_response(user_input):
-    responses = {
-        "hi": "Hello! How are you doing?",
-        "hello": "Hi there! Welcome to Phoenix chatbot.",
-        "xup": "I'm good, and you?",
-        "how are you": "I'm doing great, thanks for asking!",
-        "who are you": "I am Phoenix, your AI assistant.",
-        "what is your name": "My name is Phoenix 🤖.",
-        "bye": "Goodbye! Have a wonderful day.",
-        "good morning": "Good morning! Wishing you a productive day 🌞.",
-        "good night": "Good night! Sweet dreams 🌙.",
-        "thanks": "You're welcome!",
-        "thank you": "Glad to help! 😊",
-        "ok": "Alright 👍",
-        "yes": "Great!",
-        "no": "Okay, no problem.",
-        "help": "Sure, I'm here to help. Ask me anything!",
-        "who made you": "I was built by Olawale (Founder Of Phoenix 🔥).",
-        "your purpose": "I am here to assist and chat with you.",
-        "what is ai": "AI means Artificial Intelligence — machines that can think and learn.",
-        "what is chatbot": "A chatbot is a program that talks with humans like I do.",
-        "tell me a joke": "Why don’t skeletons fight? They don’t have the guts 😂.",
-        "sing for me": "I can't sing, but I can drop lyrics 🎶.",
-        "what is love": "Love is a deep feeling of affection 💖.",
-        "what is money": "Money is a medium of exchange, used to buy goods and services.",
-        "who is elon musk": "Elon Musk is the CEO of Tesla and SpaceX 🚀.",
-        "who is jeff bezos": "Jeff Bezos is the founder of Amazon.",
-        "who is bill gates": "Bill Gates is the co-founder of Microsoft.",
-        "who is dangote": "Aliko Dangote is Africa's richest man 💰.",
-        "what is nigeria": "Nigeria is a country in West Africa 🇳🇬.",
-        "capital of nigeria": "The capital of Nigeria is Abuja.",
-        "currency of nigeria": "The currency of Nigeria is Naira (₦).",
-        "who is president of nigeria": "The current president is Bola Ahmed Tinubu (as of 2025).",
-        "who is usa president": "The President of USA is Joe Biden (as of 2025).",
-        "what is football": "Football is the world’s most popular sport ⚽.",
-        "who is messi": "Lionel Messi is one of the greatest footballers ever 🐐.",
-        "who is ronaldo": "Cristiano Ronaldo is a legendary footballer 💪.",
-        "who is asake": "Asake is a Nigerian singer, also called Mr. Money 🎶.",
-        "who is wizkid": "Wizkid is a Nigerian Afrobeats superstar 🌍.",
-        "who is davido": "Davido is a Nigerian Afrobeats artist 🔥.",
-        "who is burna boy": "Burna Boy is the African Giant, Grammy award winner 🏆.",
-        "who is drake": "Drake is a Canadian rapper and singer 🎤.",
-        "time": "I can't tell exact time, but you can check your clock ⏰.",
-        "date": "I can’t tell exact date, but today is a good day 🌟.",
-        "weather": "I can't fetch weather right now, check your local forecast 🌦️.",
-        "what is python": "Python is a popular programming language 🐍.",
-        "what is java": "Java is a programming language used for apps and systems.",
-        "what is html": "HTML is the language for creating web pages 🌐.",
-        "what is css": "CSS styles web pages to make them look good 🎨.",
-        "what is javascript": "JavaScript makes websites interactive ⚡.",
-        "what is flask": "Flask is a Python web framework for building apps.",
-        "what is streamlit": "Streamlit is used to build AI/ML apps with Python.",
-        "what is github": "GitHub is a platform to host and share code.",
-        "what is google": "Google is the world’s biggest search engine 🔍.",
-        "what is youtube": "YouTube is the largest video platform 🎥.",
-        "what is tiktok": "TikTok is a short video sharing app 📱.",
-        "what is instagram": "Instagram is a photo and video sharing social media.",
-        "what is facebook": "Facebook is a social networking platform.",
-        "what is whatsapp": "WhatsApp is a messaging app owned by Meta.",
-        "what is twitter": "Twitter (X) is a microblogging platform for short posts.",
-        "who owns twitter": "Twitter (X) is owned by Elon Musk.",
-        "i am hungry": "You should grab something to eat 🍲.",
-        "i am tired": "Take a rest, health first 🛌.",
-        "i am happy": "That's great to hear 😃.",
-        "i am sad": "Sorry to hear that 💔. Things will get better.",
-        "tell me story": "Once upon a time… you started chatting with Phoenix 😉.",
-        "motivate me": "Keep pushing, your breakthrough is closer than you think 🚀.",
-        "are you real": "I’m a chatbot, but I feel real right?",
-        "do you love me": "Of course 💖, as a friend!",
-        "can you dance": "I can't dance, but I can vibe with you 💃.",
-        "sing": "🎶 La la la… I can’t sing but I can type songs.",
-        "can you cook": "I can’t cook but I can share recipes 🍳.",
-        "are you human": "No, I am Phoenix AI 🤖.",
-        "what is life": "Life is a journey, make the most of it 🌍.",
-        "what is death": "Death is the end of life… let’s talk about happy things 😊.",
-        "who is god": "God is the creator, believed in many religions 🙏.",
-        "religion": "Religion is a set of beliefs about God or gods.",
-        "education": "Education is the process of learning and gaining knowledge.",
-        "school": "School is where people go to study 📚.",
-        "teacher": "Teachers help students learn.",
-        "student": "A student is someone who learns.",
-        "food": "Food is what we eat to stay alive 🍔.",
-        "drink": "Drinks refresh the body 🍹.",
-        "computer": "A computer is an electronic machine that processes data 💻.",
-        "phone": "A phone lets you call, text, and browse 📱.",
-        "music": "Music is food for the soul 🎵.",
-        "dance": "Dance is moving to music 💃🕺.",
-        "movie": "Movies are entertainment on screen 🎬.",
-        "game": "Games are activities for fun or challenge 🎮."
-    }
+    try:
+        # Detect language
+        detected = translator.detect(user_input)
+        user_lang = detected.lang
 
-    fallbacks = [
-        "Hmm 🤔… I’m not sure about that yet.",
-        "Can you ask in another way?",
-        "I don’t know that one, but I’m learning every day!",
-        "Interesting… tell me more.",
-        "I didn’t catch that, can you rephrase?",
-        "That’s new to me 😅.",
-        "Good question… I’ll update my brain on that!"
-    ]
+        # Translate user input to English
+        translated_text = translator.translate(user_input, src=user_lang, dest="en").text.lower()
 
-    user_input = user_input.lower().strip()
-    return responses.get(user_input, random.choice(fallbacks))
+        # Find best match
+        response = None
+        for question, answer in qa_pairs.items():
+            if question in translated_text:
+                response = answer
+                break
+
+        if not response:
+            response = "Sorry, I don’t understand that yet."
+
+        # Translate response back to original language
+        final_response = translator.translate(response, src="en", dest=user_lang).text
+
+        return final_response
+
+    except Exception as e:
+        return "Error: " + str(e)

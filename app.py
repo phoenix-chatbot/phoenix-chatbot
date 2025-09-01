@@ -9,9 +9,9 @@ def home():
 
 @app.route("/get", methods=["POST"])
 def get_bot_response():
-    user_input = request.json.get("msg")
-    bot_response = get_response(user_input)
+    user_message = request.json.get("message")
+    bot_response = get_response(user_message)
     return jsonify({"response": bot_response})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)

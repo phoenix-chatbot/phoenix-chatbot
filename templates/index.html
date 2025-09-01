@@ -1,59 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Phoenix Chatbot</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; }
-    #chatbox { width: 80%; max-width: 500px; margin: 20px auto; background: #fff; border-radius: 10px; padding: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-    #messages { height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; text-align: left; }
-    .user { color: blue; margin: 5px 0; }
-    .bot { color: green; margin: 5px 0; }
-    input { width: 70%; padding: 8px; }
-    button { padding: 8px 15px; }
-  </style>
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+    <title>Phoenix Chatbot</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
      crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>🔥 Phoenix Chatbot 🔥</h1>
-  <div id="chatbox">
-    <div id="messages"></div>
-    <input id="user_input" type="text" placeholder="Type your message...">
+    <h1>Phoenix Chatbot 🌍</h1>
+    <div id="chatbox" style="border:1px solid #ccc; padding:10px; width:300px; height:300px; overflow-y:auto;"></div>
+    <input type="text" id="userInput" placeholder="Type a message..." style="width:240px;">
     <button onclick="sendMessage()">Send</button>
-  </div>
 
-  <!-- Ad block under chatbot -->
-  <ins class="adsbygoogle"
-       style="display:block; text-align:center; margin-top:20px;"
-       data-ad-client="ca-pub-5149547050862927"
-       data-ad-slot="1234567890"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>
-       (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+    <!-- Adsense Ad -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5149547050862927"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
-  <script>
-    async function sendMessage() {
-      let user_input = document.getElementById("user_input").value;
-      if (!user_input) return;
+    <script>
+        async function sendMessage() {
+            let userText = document.getElementById("userInput").value;
+            document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + userText + "</p>";
+            document.getElementById("userInput").value = "";
 
-      let messages = document.getElementById("messages");
-      messages.innerHTML += "<div class='user'><b>You:</b> " + user_input + "</div>";
+            let response = await fetch("/get", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: userText})
+            });
 
-      const response = await fetch("/get", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ msg: user_input })
-      });
-      const data = await response.json();
-
-      messages.innerHTML += "<div class='bot'><b>Phoenix:</b> " + data.response + "</div>";
-      document.getElementById("user_input").value = "";
-      messages.scrollTop = messages.scrollHeight;
-    }
-  </script>
+            let data = await response.json();
+            document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.response + "</p>";
+        }
+    </script>
 </body>
 </html>
