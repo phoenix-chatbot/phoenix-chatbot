@@ -1,36 +1,38 @@
-import json
 from googletrans import Translator
 
-# Load Q&A from JSON file
-with open("qa.json", "r", encoding="utf-8") as f:
-    qa_pairs = json.load(f)
-
-# Create translator object
 translator = Translator()
+
+# Q&A knowledge base
+qa_pairs = {
+    "hi": "Hello! How can I help you today?",
+    "xup": "I'm doing great! How about you?",
+    "who are you": "I am Phoenix, your friendly chatbot assistant.",
+    "bye": "Goodbye! Have a nice day.",
+    "help": "Sure, I'm here to help. What do you need?",
+}
 
 def get_response(user_input):
     try:
-        # Detect language
-        detected = translator.detect(user_input)
-        user_lang = detected.lang
+        # Detect user language
+        detected_lang = translator.detect(user_input).lang
 
-        # Translate user input to English
-        translated_text = translator.translate(user_input, src=user_lang, dest="en").text.lower()
+        # Translate input to English (our base language)
+        translated_input = translator.translate(user_input, src=detected_lang, dest="en").text.lower()
 
-        # Find best match
+        # Match input with known Q&A (fuzzy match)
         response = None
-        for question, answer in qa_pairs.items():
-            if question in translated_text:
-                response = answer
+        for key, value in qa_pairs.items():
+            if key in translated_input:  # substring match
+                response = value
                 break
 
+        # If no match found
         if not response:
             response = "Sorry, I don’t understand that yet."
 
-        # Translate response back to original language
-        final_response = translator.translate(response, src="en", dest=user_lang).text
-
+        # Translate response back to user's language
+        final_response = translator.translate(response, src="en", dest=detected_lang).text
         return final_response
 
     except Exception as e:
-        return "Error: " + str(e)
+        return f"⚠️ Error: {str(e)}"
