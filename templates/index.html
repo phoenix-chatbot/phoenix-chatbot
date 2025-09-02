@@ -1,79 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Phoenix Chatbot</title>
-
-  <!-- Google AdSense (replace client id below) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-     crossorigin="anonymous"></script>
-
-  <style>
-    body { font-family: Arial, sans-serif; background:#f4f4f6; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-    .card { width:420px; background:#fff; padding:18px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.08); }
-    #chatbox { height:340px; overflow:auto; border:1px solid #eee; padding:10px; margin-bottom:10px; }
-    .user { text-align:right; color:#0a58ca; margin:6px 0; }
-    .bot  { text-align:left; color:#333; margin:6px 0; }
-    input { width:76%; padding:8px; border:1px solid #ddd; border-radius:6px; }
-    button { padding:9px 12px; margin-left:6px; background:#ff6600; color:#fff; border:none; border-radius:6px; cursor:pointer; }
-    .ad-box { margin-top:12px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Phoenix Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #ece5dd;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        /* Header with bot name */
+        .chat-header {
+            background: #075e54;
+            color: white;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+        }
+        .chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: #ece5dd;
+        }
+        .message {
+            margin: 8px 0;
+            padding: 10px 14px;
+            border-radius: 15px;
+            max-width: 75%;
+            display: inline-block;
+            clear: both;
+            position: relative;
+        }
+        .user-message {
+            background: #dcf8c6;
+            float: right;
+            text-align: right;
+        }
+        .bot-message {
+            background: #fff;
+            float: left;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .timestamp {
+            font-size: 10px;
+            color: gray;
+            margin-top: 4px;
+            display: block;
+        }
+        .input-area {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+        .input-area button {
+            padding: 12px 20px;
+            border: none;
+            background: #075e54;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .input-area button:hover {
+            background: #0b7a65;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h3>🔥 Phoenix Chatbot</h3>
-    <div id="chatbox"></div>
+    <div class="chat-container">
+        <!-- Bot name header -->
+        <div class="chat-header">Phoenix Chatbot</div>
 
-    <div>
-      <input id="userInput" placeholder="Type your question..." />
-      <button id="sendBtn">Send</button>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter'){sendMessage()}">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
-    <!-- Ad placeholder (bottom) -->
-    <div class="ad-box">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="pub-5149547050862927"
-           data-ad-slot="7559198224"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
+    <script>
+        function getTimestamp() {
+            let now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
 
-  <script>
-    const sendBtn = document.getElementById('sendBtn');
-    const userInput = document.getElementById('userInput');
-    const chatbox = document.getElementById('chatbox');
+        function addMessage(message, sender) {
+            let chatBox = document.getElementById("chat-box");
+            let msgDiv = document.createElement("div");
+            msgDiv.classList.add("message");
+            msgDiv.classList.add(sender === "user" ? "user-message" : "bot-message");
 
-    async function sendMessage() {
-      const txt = userInput.value.trim();
-      if (!txt) return;
-      chatbox.innerHTML += `<div class="user"><b>You:</b> ${escapeHtml(txt)}</div>`;
-      userInput.value = '';
-      chatbox.scrollTop = chatbox.scrollHeight;
+            msgDiv.innerHTML = `
+                <span>${message}</span>
+                <span class="timestamp">${getTimestamp()}</span>
+            `;
 
-      try {
-        const res = await fetch('/get', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({message: txt})
-        });
-        const data = await res.json();
-        chatbox.innerHTML += `<div class="bot"><b>Phoenix:</b> ${escapeHtml(data.reply)}</div>`;
-        chatbox.scrollTop = chatbox.scrollHeight;
-      } catch (err) {
-        chatbox.innerHTML += `<div class="bot"><b>Phoenix:</b> Sorry, something went wrong.</div>`;
-      }
-    }
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // auto-scroll
+        }
 
-    function escapeHtml(s) {
-      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    }
+        async function sendMessage() {
+            let inputField = document.getElementById("user-input");
+            let message = inputField.value.trim();
+            if (!message) return;
 
-    sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-  </script>
+            // Show user message
+            addMessage(message, "user");
+            inputField.value = "";
+
+            // Send to backend
+            let response = await fetch("/get", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: message})
+            });
+            let data = await response.json();
+
+            // Show bot response
+            addMessage(data.response, "bot");
+        }
+    </script>
 </body>
 </html>
