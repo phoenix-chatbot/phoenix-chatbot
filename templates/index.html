@@ -1,78 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Phoenix Chatbot</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #ece5dd;
+      margin: 0;
+    }
+    #container {
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #header {
+      background: #075e54;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #chatbox {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #e5ddd5;
+    }
+    .user {
+      text-align: right;
+    }
+    .user span {
+      background: #dcf8c6;
+      padding: 8px 12px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 5px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .bot {
+      text-align: left;
+    }
+    .bot span {
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 5px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    #controls {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+    button {
+      background: #25d366;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #128c7e;
+    }
+    #ads {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+  </style>
+
+  <!-- Google AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
      crossorigin="anonymous"></script>
 </head>
 <body>
-  <h2>Phoenix Chatbot</h2>
-  <div id="chatbox"></div>
-  <input type="text" id="userInput" placeholder="Type your message...">
-  <button onclick="sendMessage()">Send</button>
+  <div id="container">
+    <div id="header">Phoenix Chatbot</div>
+    <div id="chatbox"></div>
+    <div id="controls">
+      <input type="text" id="userInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <!-- Ads Section -->
+    <div id="ads">
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-5149547050862927"
+          data-ad-slot="3571851756"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
 
   <script>
     async function sendMessage() {
-      let message = document.getElementById("userInput").value;
-      document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + message + "</p>";
-      document.getElementById("userInput").value = "";
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (message === "") return;
 
-      let response = await fetch("/get", {
+      // Show user message
+      document.getElementById("chatbox").innerHTML += `<p class="user"><span>${message}</span></p>`;
+      input.value = "";
+
+      // Scroll chat down
+      document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight;
+
+      // Send to backend
+      const response = await fetch("/get", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: message})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ msg: message })
       });
+      const data = await response.json();
 
-      let data = await response.json();
-      document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
+      // Show bot reply
+      document.getElementById("chatbox").innerHTML += `<p class="bot"><span>${data.reply}</span></p>`;
+
+      // Scroll down again
+      document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight;
     }
+
+    // Allow pressing Enter to send
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
   </script>
-
-  <!-- Adsense example -->
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-5149547050862927"
-       data-ad-slot="<!DOCTYPE html>
-<html>
-<head>
-  <title>Phoenix Chatbot</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-     crossorigin="anonymous"></script>
-</head>
-<body>
-  <h2>Phoenix Chatbot</h2>
-  <div id="chatbox"></div>
-  <input type="text" id="userInput" placeholder="Type your message...">
-  <button onclick="sendMessage()">Send</button>
-
-  <script>
-    async function sendMessage() {
-      let message = document.getElementById("userInput").value;
-      document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + message + "</p>";
-      document.getElementById("userInput").value = "";
-
-      let response = await fetch("/get", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: message})
-      });
-
-      let data = await response.json();
-      document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
-    }
-  </script>
-
-  <!-- Adsense example -->
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-5149547050862927"
-       data-ad-slot="3571851756"
-       data-ad-format="auto"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</body>
-</html>
-"
-       data-ad-format="auto"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
 </html>
