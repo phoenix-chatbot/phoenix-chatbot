@@ -1,152 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Phoenix Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #ece5dd;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .chat-container {
-            width: 400px;
-            height: 600px;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        /* Header with bot name */
-        .chat-header {
-            background: #075e54;
-            color: white;
-            padding: 14px;
-            font-weight: bold;
-            font-size: 16px;
-            text-align: center;
-        }
-        .chat-box {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background: #ece5dd;
-        }
-        .message {
-            margin: 8px 0;
-            padding: 10px 14px;
-            border-radius: 15px;
-            max-width: 75%;
-            display: inline-block;
-            clear: both;
-            position: relative;
-        }
-        .user-message {
-            background: #dcf8c6;
-            float: right;
-            text-align: right;
-        }
-        .bot-message {
-            background: #fff;
-            float: left;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        .timestamp {
-            font-size: 10px;
-            color: gray;
-            margin-top: 4px;
-            display: block;
-        }
-        .input-area {
-            display: flex;
-            border-top: 1px solid #ccc;
-        }
-        .input-area input {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-        }
-        .input-area button {
-            padding: 12px 20px;
-            border: none;
-            background: #075e54;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .input-area button:hover {
-            background: #0b7a65;
-        }
-    </style>
+  <title>Phoenix Chatbot</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="chat-container">
-        <!-- Bot name header -->
-        <div class="chat-header">Phoenix Chatbot</div>
+  <h2>Phoenix Chatbot</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="userInput" placeholder="Type your message...">
+  <button onclick="sendMessage()">Send</button>
 
-        <div class="chat-box" id="chat-box"></div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter'){sendMessage()}">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+  <script>
+    async function sendMessage() {
+      let message = document.getElementById("userInput").value;
+      document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + message + "</p>";
+      document.getElementById("userInput").value = "";
 
-    <script>
-        function getTimestamp() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            return hours + ':' + minutes + ' ' + ampm;
-        }
+      let response = await fetch("/get", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: message})
+      });
 
-        function addMessage(message, sender) {
-            let chatBox = document.getElementById("chat-box");
-            let msgDiv = document.createElement("div");
-            msgDiv.classList.add("message");
-            msgDiv.classList.add(sender === "user" ? "user-message" : "bot-message");
+      let data = await response.json();
+      document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
+    }
+  </script>
 
-            msgDiv.innerHTML = `
-                <span>${message}</span>
-                <span class="timestamp">${getTimestamp()}</span>
-            `;
+  <!-- Adsense example -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-5149547050862927"
+       data-ad-slot="<!DOCTYPE html>
+<html>
+<head>
+  <title>Phoenix Chatbot</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+  <h2>Phoenix Chatbot</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="userInput" placeholder="Type your message...">
+  <button onclick="sendMessage()">Send</button>
 
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // auto-scroll
-        }
+  <script>
+    async function sendMessage() {
+      let message = document.getElementById("userInput").value;
+      document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + message + "</p>";
+      document.getElementById("userInput").value = "";
 
-        async function sendMessage() {
-            let inputField = document.getElementById("user-input");
-            let message = inputField.value.trim();
-            if (!message) return;
+      let response = await fetch("/get", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: message})
+      });
 
-            // Show user message
-            addMessage(message, "user");
-            inputField.value = "";
+      let data = await response.json();
+      document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
+    }
+  </script>
 
-            // Send to backend
-            let response = await fetch("/get", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({message: message})
-            });
-            let data = await response.json();
-
-            // Show bot response
-            addMessage(data.response, "bot");
-        }
-    </script>
+  <!-- Adsense example -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-5149547050862927"
+       data-ad-slot="3571851756"
+       data-ad-format="auto"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</body>
+</html>
+"
+       data-ad-format="auto"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
 </html>
