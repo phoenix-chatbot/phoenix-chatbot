@@ -2,131 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phoenix Chatbot</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #ece5dd; margin: 0; }
-    .chat-wrapper { width: 400px; margin: 20px auto; background: #fff; border-radius: 10px; box-shadow: 0 0 10px #aaa; overflow: hidden; }
-    
-    /* Header */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ece5dd;
+      margin: 0;
+      padding: 0;
+    }
+    .chat-container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
     .chat-header {
       background: #075E54;
-      color: white;
+      color: #fff;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
       display: flex;
       align-items: center;
-      padding: 10px;
     }
     .chat-header img {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       margin-right: 10px;
     }
-    .chat-header h3 { margin: 0; font-size: 18px; }
-
-    /* Messages */
-    .messages {
-      height: 450px;
-      overflow-y: auto;
+    .chat-box {
+      flex: 1;
       padding: 10px;
+      overflow-y: auto;
       background: #e5ddd5;
     }
-    .message {
+    .msg {
       margin: 8px 0;
-      max-width: 70%;
-      padding: 8px 12px;
+      padding: 10px;
       border-radius: 7px;
-      font-size: 14px;
-      line-height: 1.4;
+      max-width: 70%;
       clear: both;
-      word-wrap: break-word;
     }
     .user {
       background: #dcf8c6;
       float: right;
-      border-bottom-right-radius: 0;
     }
     .bot {
       background: #fff;
       float: left;
-      border-bottom-left-radius: 0;
     }
-
-    /* Input area */
-    .input-area {
+    .chat-input {
       display: flex;
-      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #f0f0f0;
     }
-    .input-area input {
+    .chat-input input {
       flex: 1;
       padding: 10px;
       border: none;
+      border-radius: 20px;
       outline: none;
-      font-size: 14px;
     }
-    .input-area button {
+    .chat-input button {
       background: #075E54;
       color: white;
       border: none;
-      padding: 10px 20px;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      margin-left: 8px;
       cursor: pointer;
+      font-size: 16px;
     }
-    .input-area button:hover { background: #0b7a65; }
   </style>
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-     crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="chat-wrapper">
-    <!-- Header with profile -->
+
+  <!-- AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
+     crossorigin="anonymous"></script>
+
+  <div class="chat-container">
     <div class="chat-header">
-      <img src="https://i.ibb.co/5xJ3qkD/avatar.png" alt="profile">
-      <h3>Phoenix</h3>
+      <img src="/static/profile.png" alt="Profile">
+      Phoenix Chatbot
     </div>
-
-    <!-- Messages -->
-    <div class="messages" id="chatbox"></div>
-
-    <!-- Input -->
-    <div class="input-area">
-      <input id="userInput" type="text" placeholder="Type a message..." />
-      <button onclick="sendMessage()">Send</button>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Type a message..." onkeydown="checkEnter(event)">
+      <button onclick="sendMessage()">➤</button>
     </div>
-  </div>
-
-  <!-- AdSense ad placement -->
-  <div style="width:400px; margin:20px auto; text-align:center;">
-    <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-5149547050862927"
-        data-ad-slot="1234567890"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
   </div>
 
   <script>
-    async function sendMessage() {
-      let userText = document.getElementById("userInput").value.trim();
-      if (!userText) return;
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("msg", sender);
+      msg.textContent = text;
+      document.getElementById("chat-box").appendChild(msg);
+      msg.scrollIntoView();
+    }
 
-      let chatbox = document.getElementById("chatbox");
-      chatbox.innerHTML += `<div class='message user'>${userText}</div>`;
-      document.getElementById("userInput").value = "";
+    function sendMessage() {
+      const input = document.getElementById("user-input");
+      const text = input.value.trim();
+      if (text === "") return;
+      appendMessage(text, "user");
+      input.value = "";
 
-      let response = await fetch("/get", {
+      fetch("/get", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userText })
-      });
+        body: JSON.stringify({ msg: text })
+      })
+      .then(res => res.json())
+      .then(data => appendMessage(data.reply, "bot"));
+    }
 
-      let data = await response.json();
-      chatbox.innerHTML += `<div class='message bot'>${data.reply}</div>`;
-      chatbox.scrollTop = chatbox.scrollHeight;
+    // ✅ Send on Enter key
+    function checkEnter(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
     }
   </script>
+
 </body>
 </html>
