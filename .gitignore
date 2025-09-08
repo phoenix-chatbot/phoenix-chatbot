@@ -1,9 +1,11 @@
+# secrets
 .env
 key.env
-gitignore.env
+
+# python
 __pycache__/
-flask_session/
-*.py[cod]
-.DS_Store
-Thumbs.db
-.env.*
+*.pyc
+
+# node/build (if any)
+dist/
+build/

@@ -2,137 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phoenix Chatbot</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #ece5dd;
-      margin: 0;
-      padding: 0;
-    }
-    .chat-container {
-      max-width: 600px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      height: 80vh;
-    }
-    .chat-header {
-      background: #075E54;
-      color: #fff;
-      padding: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-    }
-    .chat-header img {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    .chat-box {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-      background: #e5ddd5;
-    }
-    .msg {
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 7px;
-      max-width: 70%;
-      clear: both;
-    }
-    .user {
-      background: #dcf8c6;
-      float: right;
-    }
-    .bot {
-      background: #fff;
-      float: left;
-    }
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      background: #f0f0f0;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 20px;
-      outline: none;
-    }
-    .chat-input button {
-      background: #075E54;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      margin-left: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR-ADSENSE-ID"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-
-  <!-- AdSense Script -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5149547050862927"
-     crossorigin="anonymous"></script>
-
-  <div class="chat-container">
-    <div class="chat-header">
-      <img src="/static/profile.png" alt="Profile">
-      Phoenix Chatbot
-    </div>
-    <div class="chat-box" id="chat-box"></div>
-    <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Type a message..." onkeydown="checkEnter(event)">
-      <button onclick="sendMessage()">➤</button>
-    </div>
+  <div class="chat-header">
+    <img src="/static/avatar.png" alt="avatar" class="avatar">
+    <h1>Phoenix Chatbot 🔥</h1>
   </div>
 
-  <script>
-    function appendMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.classList.add("msg", sender);
-      msg.textContent = text;
-      document.getElementById("chat-box").appendChild(msg);
-      msg.scrollIntoView();
-    }
+  <div class="chat-container" id="chat"></div>
 
-    function sendMessage() {
-      const input = document.getElementById("user-input");
-      const text = input.value.trim();
-      if (text === "") return;
-      appendMessage(text, "user");
-      input.value = "";
+  <div class="chat-input">
+    <input id="user-input" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
-      fetch("/get", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ msg: text })
-      })
-      .then(res => res.json())
-      .then(data => appendMessage(data.reply, "bot"));
-    }
-
-    // ✅ Send on Enter key
-    function checkEnter(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        sendMessage();
-      }
-    }
-  </script>
-
+  <script src="/static/script.js"></script>
 </body>
 </html>

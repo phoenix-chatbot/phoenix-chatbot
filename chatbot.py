@@ -1,30 +1,36 @@
 import json
-import difflib
+import wikipedia
+import markdown2
 
-# Load Q&A data from qa.json
+# Load predefined Q&A
 with open("qa.json", "r", encoding="utf-8") as f:
     qa = json.load(f)
 
-def get_response(user_input):
-    user_input = user_input.lower().strip()
+def format_response(text: str) -> str:
+    """Convert Markdown reply into safe HTML."""
+    return markdown2.markdown(text)
 
-    # Exact match first
-    if user_input in qa:
-        return qa[user_input]
+def get_response(user_input: str) -> str:
+    text = user_input.lower().strip()
 
-    # Fuzzy match: find closest key in qa.json
-    closest_matches = difflib.get_close_matches(user_input, qa.keys(), n=1, cutoff=0.4)
-    if closest_matches:
-        best_match = closest_matches[0]
-        return qa[best_match]
+    # 1. Check in qa.json
+    if text in qa:
+        return format_response(f"💡 **{qa[text]}**")
 
-    # If nothing matches
-    return "Hmm... I’m not sure, but I’ll keep learning! 😊"
+    # 2. Wikipedia fallback
+    if len(text.split()) > 1:
+        try:
+            summary = wikipedia.summary(text, sentences=2)
+            if len(summary) > 300:
+                summary = summary[:300] + "..."
+            return format_response(f"📘 **Here’s what I found:**\n\n{summary}")
+        except:
+            return format_response("⚠️ _Sorry, I couldn’t find info on that._")
 
-if __name__ == "__main__":
-    print("Phoenix Chatbot (fuzzy). Type 'exit' to stop.")
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            break
-        print("Bot:", get_response(user_input))
+    # 3. Greetings
+    greetings = ["hi", "hello", "hey", "xup", "good morning", "good night"]
+    if text in greetings:
+        return format_response("👋 **Hello there!** How can I help you today?")
+
+    # 4. Default response
+    return format_response("🤖 _I'm **Phoenix** — your AI assistant. Try asking me anything!_")
