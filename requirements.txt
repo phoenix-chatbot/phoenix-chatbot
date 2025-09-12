@@ -1,4 +1,6 @@
 flask
+fuzzywuzzy
 openai
+python-Levenshtein
 python-dotenv
 gunicorn

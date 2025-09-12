@@ -1,24 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("user-input");
-  input.addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
-  });
-});
+  const sendBtn = document.getElementById("send-btn");
+  const chatBox = document.getElementById("chat-box");
 
-async function sendMessage() {
-  const input = document.getElementById("user-input");
-  const chat = document.getElementById("chat");
-  const message = input.value.trim();
+  function appendMessage(sender, message) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = sender === "You" ? "user-msg" : "bot-msg";
+    msgDiv.textContent = message;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-  if (message === "") return;
+  async function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
 
-  // Display user message
-  chat.innerHTML += `<div class="message user">${message}</div>`;
-  input.value = "";
+    appendMessage("You", message);
+    input.value = "";
 
-  try {
     const res = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,10 +25,11 @@ async function sendMessage() {
     });
 
     const data = await res.json();
-    chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
-    chat.scrollTop = chat.scrollHeight;
-
-  } catch (err) {
-    chat.innerHTML += `<div class="message bot">⚠️ Error: ${err.message}</div>`;
+    appendMessage("Bot", data.reply);
   }
-}
+
+  sendBtn.addEventListener("click", sendMessage);
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+});
