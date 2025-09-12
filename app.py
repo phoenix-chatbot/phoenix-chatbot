@@ -29,5 +29,13 @@ def chat():
 def terms():
     return render_template("terms.html")
 
+@app.route('/google123abc456.html')
+def adsense_verify():
+    return send_from_directory('.', 'google1234567890abcdef.html')
+
+@app.route('/ads.txt')
+def ads():
+    return send_from_directory('.', 'ads.txt')
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=10000)
